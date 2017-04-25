@@ -14,8 +14,69 @@ public class Artist implements Parcelable {
     private String imageLink;
     private String publishedOn;
     private String summary;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public long getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(long listeners) {
+        this.listeners = listeners;
+    }
+
+    public String getImageLink() {
+        return imageLink;
+    }
+
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
+    }
+
+    public String getPublishedOn() {
+        return publishedOn;
+    }
+
+    public void setPublishedOn(String publishedOn) {
+        this.publishedOn = publishedOn;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getWikiLink() {
+        return wikiLink;
+    }
+
+    public void setWikiLink(String wikiLink) {
+        this.wikiLink = wikiLink;
+    }
+
+    public List<SimilarArtist> getSimilarArtists() {
+        return similarArtists;
+    }
+
+    public void setSimilarArtists(List<SimilarArtist> similarArtists) {
+        this.similarArtists = similarArtists;
+    }
+
     private String wikiLink;
     private List<SimilarArtist> similarArtists;
+
+    public Artist(){
+
+    }
 
 
     protected Artist(Parcel in) {
