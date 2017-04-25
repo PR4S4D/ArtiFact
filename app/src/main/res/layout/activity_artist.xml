@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.slp.artifact.activity.ArtistActivity">
+
+    <ImageView
+        android:id="@+id/artist_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        tools:src="@drawable/artist"
+        />
+
+    <TextView
+        android:id="@+id/artist_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:gravity="center"
+        tools:text="Rihanna"
+        android:layout_margin="5dp"/>
+    <TextView
+        android:id="@+id/publish_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:textSize="16dp"
+        android:gravity="center"
+        tools:text="1/1/1"
+        android:layout_margin="5dp"/>
+    <TextView
+        android:id="@+id/listeners"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:gravity="center"
+        tools:text="1234567890"
+        android:layout_margin="5dp"/>
+    <TextView
+        android:id="@+id/artist_summary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        tools:text="This is Rihanna who's sung shining bright like a diamond"
+        />
+
+    <ListView
+        android:id="@+id/similar_artists"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+</LinearLayout>

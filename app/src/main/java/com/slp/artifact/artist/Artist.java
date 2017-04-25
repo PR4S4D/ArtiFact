@@ -15,6 +15,12 @@ public class Artist implements Parcelable {
     private String publishedOn;
     private String summary;
 
+    public Artist(String name, long listeners, String imageLink) {
+        this.name = name;
+        this.listeners = listeners;
+        this.imageLink = imageLink;
+    }
+
     public String getName() {
         return name;
     }

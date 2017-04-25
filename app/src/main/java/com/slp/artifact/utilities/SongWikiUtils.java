@@ -19,6 +19,29 @@ import java.util.List;
 
 public class SongWikiUtils implements SongWikiConstants {
 
+    public static List<Artist> getTopChartArtists() throws IOException, JSONException {
+        List<Artist> topChartArtist = new ArrayList<>();
+        String topArtistDetails = NetworkUtils.getResponseFromHttpUrl(new URL(TOP_ARTISTS_END_POINT));
+        JSONObject topArtistJsonObject = new JSONObject(topArtistDetails);
+        JSONObject artists = topArtistJsonObject.getJSONObject(ARTISTS);
+        JSONArray artistArray = (JSONArray) artists.get("artist");
+
+        String name;
+        long listeners;
+        String imageLink;
+
+        for (int i = 0; i < artistArray.length(); i++) {
+            JSONObject artist = (JSONObject) artistArray.get(i);
+            if (null != artist) {
+                name = (String) artist.get("name");
+                listeners = Long.valueOf((String) artist.get("listeners"));
+                imageLink = getArtistImage((JSONArray) artist.get("image"));
+                topChartArtist.add(new Artist(name, listeners, imageLink));
+            }
+        }
+        return topChartArtist;
+    }
+
     public static List<String> getTopChartArtistNames() throws IOException, JSONException {
         List<String> topChartArtist = new ArrayList<>();
         String topArtistDetails = NetworkUtils.getResponseFromHttpUrl(new URL(TOP_ARTISTS_END_POINT));
@@ -40,10 +63,10 @@ public class SongWikiUtils implements SongWikiConstants {
         List<String> artistNames = getTopChartArtistNames();
         if (null != artistNames) {
             for (String name : artistNames) {
-                 name = URLEncoder.encode(name,"UTF-8");
+                name = URLEncoder.encode(name, "UTF-8");
                 URL url = new URL(ARTIST_INFO_END_POINT + name);
                 String artistDetails = NetworkUtils.getResponseFromHttpUrl(url);
-                Log.i( "getTopChartArtist: ",artistDetails);
+                Log.i("getTopChartArtist: ", artistDetails);
                 artists.add(getArtist(artistDetails));
             }
         }
@@ -56,14 +79,21 @@ public class SongWikiUtils implements SongWikiConstants {
             JSONObject jsonObject = new JSONObject(artistDetails);
             JSONObject artistObject = jsonObject.getJSONObject("artist");
             artist.setName(artistObject.getString("name"));
-            JSONArray imageArray = artistObject.getJSONArray("image");
-            if (null != imageArray) {
-                JSONObject imageObject = (JSONObject) imageArray.get(3);
-                artist.setImageLink(imageObject.getString("#text"));
-
-            }
+            artist.setImageLink(getArtistImage(artistObject.getJSONArray("image")));
         }
         return artist;
+    }
+
+    private static String getArtistImage(JSONArray imageArray) throws JSONException {
+        if (null != imageArray) {
+            JSONObject imageObj = (JSONObject) imageArray.get(IMAGE_SIZE);
+            if (null != imageObj) {
+                return imageObj.getString("#text");
+            }
+
+
+        }
+        return null;
     }
 }
 
