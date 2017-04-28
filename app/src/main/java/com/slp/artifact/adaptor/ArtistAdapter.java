@@ -24,22 +24,26 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
     private List<Artist> artistList;
     final private ListItemClickListener onClickListener;
 
+
     @Override
     public Filter getFilter() {
+
         return new Filter() {
 
             @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                artistList = (List<Artist>) results.values;
+
+                artists = (List<Artist>) results.values;
                 ArtistAdapter.this.notifyDataSetChanged();
+
             }
 
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 List<Artist> filteredResults = null;
                 if (constraint.length() == 0) {
-                    filteredResults = artists;
+                    filteredResults = artistList;
                 } else {
                     filteredResults = getFilteredResults(constraint.toString().toLowerCase());
                 }
@@ -75,11 +79,17 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
 
     @Override
     public ArtistAdapter.ArtistViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        int artistLayout = R.layout.artist;
+        int artistLayout = R.layout.artist_card;
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         View view = inflater.inflate(artistLayout, viewGroup, false);
         return new ArtistViewHolder(view);
 
+    }
+
+    public Artist getItem(int position){
+        if(null != artists)
+            return  artists.get(position);
+        return null;
     }
 
     @Override

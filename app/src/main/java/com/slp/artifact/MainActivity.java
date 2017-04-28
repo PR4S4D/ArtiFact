@@ -1,30 +1,27 @@
 package com.slp.artifact;
 
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import com.slp.artifact.activity.ArtistActivity;
 import com.slp.artifact.adaptor.ArtistAdapter;
 import com.slp.artifact.artist.Artist;
+import com.slp.artifact.artist.search.ArtistSearchResultsActivity;
 import com.slp.artifact.utilities.SongWikiUtils;
 
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Artist>>, ArtistAdapter.ListItemClickListener {
@@ -33,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private LoaderManager loaderManager;
     private List<Artist> topArtists;
     private RecyclerView rvArtists;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         loaderManager.initLoader(123, null, this);
         rvArtists = (RecyclerView) findViewById(R.id.rv_artists);
         // topArtists = (ListView) findViewById(R.id.top_Artists);
+        RecyclerView.Adapter adapter = rvArtists.getAdapter();
+
 
     }
 
@@ -49,20 +49,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         MenuItem menuItem=  menu.findItem(R.id.search);
-        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView = (SearchView) menuItem.getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
 
             @Override
             public boolean onQueryTextSubmit(String query) {
                 ((ArtistAdapter)rvArtists.getAdapter()).getFilter().filter(query);
-               startActivity(new Intent(getApplicationContext(),SearchableActivity.class));
+                Intent intent = new Intent(getApplicationContext(), ArtistSearchResultsActivity.class);
+                intent.putExtra("artist",query);
+                startActivity(intent);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                ((ArtistAdapter)rvArtists.getAdapter()).getFilter().filter(newText);
+                  ((ArtistAdapter)rvArtists.getAdapter()).getFilter().filter(newText);
                 return true;
             }
         });
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (null != artists) {
             topArtists = artists;
             rvArtists.setAdapter(new ArtistAdapter(artists, MainActivity.this));
-            int gridSize =1;
+            int gridSize =2;
             rvArtists.setLayoutManager(new GridLayoutManager(this,gridSize));
             rvArtists.setHasFixedSize(true);
         }
@@ -110,6 +112,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
+    public void onBackPressed() {
+        searchView.onActionViewCollapsed();
+            super.onBackPressed();
+
+    }
+
+    @Override
     public void onLoadFinished(Loader<List<Artist>> loader, List<Artist> artists) {
 
         initializeRecyclerView(artists);
@@ -126,7 +135,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onListItemClick(int clickedItemIndex) {
         if(null != topArtists){
                 Intent artistIntent = new Intent(this, ArtistActivity.class);
-            artistIntent.putExtra("artist",topArtists.get(clickedItemIndex));
+            Artist clickedArtist = ((ArtistAdapter)rvArtists.getAdapter()).getItem(clickedItemIndex);
+            artistIntent.putExtra("artist",clickedArtist);
             startActivity(artistIntent);
 
         }
