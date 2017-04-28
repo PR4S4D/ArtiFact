@@ -9,7 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -40,6 +43,35 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         rvArtists = (RecyclerView) findViewById(R.id.rv_artists);
         // topArtists = (ListView) findViewById(R.id.top_Artists);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        MenuItem menuItem=  menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                ((ArtistAdapter)rvArtists.getAdapter()).getFilter().filter(query);
+               startActivity(new Intent(getApplicationContext(),SearchableActivity.class));
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                ((ArtistAdapter)rvArtists.getAdapter()).getFilter().filter(newText);
+                return true;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onSearchRequested() {
+        return super.onSearchRequested();
     }
 
     private void initializeRecyclerView(List<Artist> artists) {

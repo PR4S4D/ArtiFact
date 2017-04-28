@@ -84,6 +84,23 @@ public class SongWikiUtils implements SongWikiConstants {
         return artist;
     }
 
+    public static void setArtistDetails(Artist artist) throws IOException, JSONException {
+        if(null != artist){
+           String name = URLEncoder.encode(artist.getName(), "UTF-8");
+            URL url = new URL(ARTIST_INFO_END_POINT + name);
+            String artistDetails = NetworkUtils.getResponseFromHttpUrl(url);
+
+            if (null != artistDetails) {
+                JSONObject jsonObject = new JSONObject(artistDetails);
+                JSONObject artistObject = jsonObject.getJSONObject("artist");
+
+                JSONObject artistBio = artistObject.getJSONObject("bio");
+                artist.setPublishedOn(artistBio.getString("published"));
+                artist.setSummary(artistBio.getString("summary"));
+            }
+        }
+    }
+
     private static String getArtistImage(JSONArray imageArray) throws JSONException {
         if (null != imageArray) {
             JSONObject imageObj = (JSONObject) imageArray.get(IMAGE_SIZE);
