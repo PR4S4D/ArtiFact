@@ -1,6 +1,7 @@
 package com.slp.artifact.utilities;
 
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.slp.artifact.artist.Artist;
@@ -10,6 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -18,7 +21,7 @@ import java.util.List;
 public class SongWikiUtils implements SongWikiConstants {
 
     public static List<Artist> getTopChartArtists() throws IOException, JSONException {
-        List<Artist> topChartArtist = new ArrayList<>();
+
         String topArtistDetails = NetworkUtils.getResponseFromHttpUrl(new URL(TOP_ARTISTS_END_POINT));
         JSONObject topArtistJsonObject = new JSONObject(topArtistDetails);
         JSONObject artists = topArtistJsonObject.getJSONObject(ARTISTS);
@@ -28,16 +31,25 @@ public class SongWikiUtils implements SongWikiConstants {
         long listeners;
         String imageLink;
 
+        return getArtists(artistArray);
+    }
+
+    @NonNull
+    private static List<Artist> getArtists(JSONArray artistArray) throws JSONException {
+        String name;
+        long listeners;
+        String imageLink;
+        List<Artist> artists = new ArrayList<>();
         for (int i = 0; i < artistArray.length(); i++) {
             JSONObject artist = (JSONObject) artistArray.get(i);
             if (null != artist) {
                 name = (String) artist.get("name");
                 listeners = Long.valueOf((String) artist.get("listeners"));
                 imageLink = getArtistImage((JSONArray) artist.get("image"));
-                topChartArtist.add(new Artist(name, listeners, imageLink));
+                artists.add(new Artist(name, listeners, imageLink));
             }
         }
-        return topChartArtist;
+        return artists;
     }
 
     public static List<String> getTopChartArtistNames() throws IOException, JSONException {
@@ -61,7 +73,7 @@ public class SongWikiUtils implements SongWikiConstants {
         List<String> artistNames = getTopChartArtistNames();
         if (null != artistNames) {
             for (String name : artistNames) {
-                name = URLEncoder.encode(name, "UTF-8");
+                name = getEncodedString(name);
                 URL url = new URL(ARTIST_INFO_END_POINT + name);
                 String artistDetails = NetworkUtils.getResponseFromHttpUrl(url);
                 Log.i("getTopChartArtist: ", artistDetails);
@@ -69,6 +81,10 @@ public class SongWikiUtils implements SongWikiConstants {
             }
         }
         return artists;
+    }
+
+    private static String getEncodedString(String string) throws UnsupportedEncodingException {
+        return URLEncoder.encode(string, "UTF-8");
     }
 
     public static Artist getArtist(String artistDetails) throws JSONException {
@@ -84,7 +100,7 @@ public class SongWikiUtils implements SongWikiConstants {
 
     public static void setArtistDetails(Artist artist) throws IOException, JSONException {
         if(null != artist){
-           String name = URLEncoder.encode(artist.getName(), "UTF-8");
+           String name = getEncodedString(artist.getName());
             URL url = new URL(ARTIST_INFO_END_POINT + name);
             String artistDetails = NetworkUtils.getResponseFromHttpUrl(url);
 
@@ -109,6 +125,19 @@ public class SongWikiUtils implements SongWikiConstants {
 
         }
         return null;
+    }
+
+    public static List<Artist> getArtistResult(String artist) throws IOException, JSONException {
+        artist = getEncodedString(artist);
+        URL url = new URL(SEARCH_ARTIST_END_POINT+artist);
+        String resultsJson = NetworkUtils.getResponseFromHttpUrl(url);
+        JSONObject json = new JSONObject(resultsJson);
+        JSONObject resultJson = json.getJSONObject("results");
+        JSONArray artistArray = resultJson.getJSONObject("artistmatches").getJSONArray("artist");
+        return getArtists(artistArray);
+
+
+
     }
 }
 

@@ -1,6 +1,7 @@
 package com.slp.artifact.adaptor;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,6 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
             @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-
                 artists = (List<Artist>) results.values;
                 ArtistAdapter.this.notifyDataSetChanged();
 
@@ -95,7 +95,9 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
     @Override
     public void onBindViewHolder(ArtistAdapter.ArtistViewHolder holder, int position) {
         holder.artistName.setText(artists.get(position).getName());
-        Picasso.with(holder.artistImage.getContext()).load(artists.get(position).getImageLink()).into(holder.artistImage);
+        String imageLink = artists.get(position).getImageLink();
+        if(!TextUtils.isEmpty(imageLink))
+        Picasso.with(holder.artistImage.getContext()).load(imageLink).into(holder.artistImage);
 
     }
 
