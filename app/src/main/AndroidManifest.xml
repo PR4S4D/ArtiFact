@@ -11,6 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service
+            android:name=".widget.ArtistWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
         <activity android:name=".SearchableActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -32,11 +36,22 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.ArtistActivity" />
-        <activity android:name=".artist.search.ArtistSearchResultsActivity">+
+        <activity android:name=".artist.search.ArtistSearchResultsActivity">
+            +
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+
+        <receiver android:name=".widget.ArtistWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/artist_widget_info" />
+        </receiver>
     </application>
 
 </manifest>
