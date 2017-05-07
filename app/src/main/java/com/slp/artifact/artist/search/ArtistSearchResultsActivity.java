@@ -37,8 +37,8 @@ public class ArtistSearchResultsActivity extends AppCompatActivity implements Ar
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_search_results);
         ButterKnife.bind(this);
-        String searchQwery = getIntent().getStringExtra("artist");
-        new SearchTask().execute(searchQwery);
+        String searchQuery = getIntent().getStringExtra("artist");
+        new SearchTask().execute(searchQuery);
     }
 
     @Override
